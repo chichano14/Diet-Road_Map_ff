@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<title>あなただけのダイエットナビ</title>
+
+<style>
+
+:root{--p:#4F8EF7;--pl:#EBF2FF;--ac:#FF7043;--acl:#FFF0EC;--g:#43A884;--gl:#E8F7F2;--y:#F5A623;--yl:#FFF8EC;--pu:#8A6BBE;--pul:#F0ECFA;--bg:#F5F7FA;--card:#fff;--tx:#1A1A2E;--ts:#6B7280;--bd:#E5E7EB;}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans','Noto Sans JP',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.7;}
+
+header{background:linear-gradient(135deg,#4F8EF7,#7B5EA7);color:#fff;text-align:center;padding:28px 20px 24px;}
+
+.logo{font-size:13px;opacity:.85;margin-bottom:6px;}
+
+h1{font-size:28px;font-weight:800;margin-bottom:6px;}
+
+.sub{font-size:14px;opacity:.85;}
+
+.steps{display:flex;align-items:center;justify-content:center;gap:0;padding:20px 16px;background:#fff;border-bottom:1px solid var(--bd);}
+
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px;}
+
+.sn{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;background:var(--bd);color:var(--ts);}
+
+.step.active .sn{background:var(--p);color:#fff;}
+
+.step.done .sn{background:var(--g);color:#fff;}
+
+.sl{font-size:11px;color:var(--ts);text-align:center;}
+
+.step.active .sl{color:var(--p);font-weight:700;}
+
+.sline{flex:1;height:2px;background:var(--bd);max-width:40px;margin-bottom:14px;}
+
+main{max-width:560px;margin:0 auto;padding:24px 16px 60px;}
+.sline.done{background:var(--g);}
+.step.done .sn{cursor:pointer;}
+.step.done .sn:hover{opacity:.8;transform:scale(1.1);}
+
+.pg{display:none;}
+
+.pg.show{display:block;}
+
+.card{background:var(--card);border-radius:20px;padding:24px 20px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+
+.ct{font-size:18px;font-weight:800;margin-bottom:6px;}
+
+.cs{font-size:13px;color:var(--ts);margin-bottom:20px;}
+
+.qb{font-size:14px;font-weight:700;margin-bottom:10px;margin-top:4px;}
+
+.qo-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+
+.qo{background:var(--bg);border:2px solid var(--bd);border-radius:12px;padding:12px 16px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:10px;transition:.15s;}
+
+.qo:hover{border-color:var(--p);background:var(--pl);}
+
+.qo.sel{border-color:var(--p);background:var(--pl);font-weight:700;}
+
+.oi{font-size:20px;flex-shrink:0;}
+
+.btn{display:block;width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;transition:.15s;}
+
+.btn-p{background:var(--p);color:#fff;}
+
+.btn-p:disabled{opacity:.4;cursor:not-allowed;}
+
+.btn-p:not(:disabled):hover{background:#3a7de8;}
+
+.type-box{border-radius:16px;padding:20px;margin-bottom:20px;border:2px solid transparent;}
+
+.type-box.tA{background:var(--acl);border-color:#FFCCBC;}
+
+.type-box.tB{background:var(--gl);border-color:#B2DFDB;}
+
+.type-box.tC{background:var(--yl);border-color:#FFE0B2;}
+
+.type-box.tD{background:var(--pul);border-color:#D1C4E9;}
+
+.tbadge{display:inline-block;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;margin-bottom:10px;}
+
+.tA .tbadge{background:var(--ac);color:#fff;}
+
+.tB .tbadge{background:var(--g);color:#fff;}
+
+.tC .tbadge{background:var(--y);color:#fff;}
+
+.tD .tbadge{background:var(--pu);color:#fff;}
+
+.tname{font-size:20px;font-weight:800;margin-bottom:8px;}
+
+.tdesc{font-size:13px;color:var(--ts);line-height:1.7;}
+
+.frow{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:16px;}
+
+.fg{flex:1;min-width:120px;}
+
+.fl{font-size:12px;font-weight:700;color:var(--ts);margin-bottom:4px;display:block;}
+
+.fi{width:100%;padding:10px 12px;border:2px solid var(--bd);border-radius:10px;font-size:14px;}
+
+.fi:focus{outline:none;border-color:var(--p);}
+
+.rb-wrap,.gb-wrap{display:flex;gap:8px;flex-wrap:wrap;}
+
+.rb,.gb{flex:1;padding:10px;border:2px solid var(--bd);border-radius:10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;}
+
+.rb.sel,.gb.sel{border-color:var(--p);background:var(--pl);color:var(--p);}
+
+.cb-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+
+.cb{background:var(--bg);border-radius:12px;padding:14px;text-align:center;}
+
+.cbl{font-size:11px;color:var(--ts);margin-bottom:2px;}
+
+.cbv{font-size:22px;font-weight:800;line-height:1;}
+
+.cbu{font-size:12px;color:var(--ts);margin-top:2px;}
+
+.cb.cal .cbv{color:var(--ac);}
+
+.cb.pro .cbv{color:var(--p);}
+
+.cb.fat .cbv{color:var(--y);}
+
+.cb.car .cbv{color:var(--g);}
+
+.mc{background:var(--bg);border-radius:12px;padding:14px 16px;margin-bottom:10px;}
+
+.mt{font-size:13px;font-weight:700;color:var(--ts);margin-bottom:8px;}
+
+.mi{display:flex;flex-wrap:wrap;gap:6px;}
+
+.tag{background:#fff;border:1px solid var(--bd);border-radius:20px;padding:4px 12px;font-size:12px;}
+
+.ht{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;}
+
+.htb{flex-shrink:0;padding:8px 16px;border-radius:20px;border:2px solid var(--bd);font-size:13px;font-weight:600;cursor:pointer;background:#fff;}
+
+.htb.active{border-color:var(--p);background:var(--pl);color:var(--p);}
+
+.hp{display:none;}
+
+.hp.active{display:block;}
+
+.hi{background:var(--bg);border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:13px;line-height:1.7;}
+
+.htt{font-weight:700;margin-bottom:4px;}
+
+.tod{background:var(--bg);border-radius:12px;padding:14px 16px;margin-bottom:8px;font-size:14px;cursor:pointer;display:flex;align-items:flex-start;gap:10px;}
+
+.tod::before{content:'☐';font-size:18px;flex-shrink:0;margin-top:1px;}
+
+.tod.done{opacity:.5;text-decoration:line-through;}
+
+.tod.done::before{content:'☑';}
+
+.todt{font-weight:700;margin-bottom:2px;}
+
+.tods{font-size:12px;color:var(--ts);}
+
+footer{text-align:center;padding:20px;font-size:12px;color:var(--ts);}
+
+@media(max-width:480px){main{padding:16px 12px 80px;}.card{padding:18px 16px;}}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+  <div class="logo">🥗 Diet Navi</div>
+
+  <h1>あなただけのダイエットナビ</h1>
+
+  <p class="sub">4ステップで、あなたに合った方法を見つけよう</p>
+
+</header>
+
+<div class="steps">
+
+<div class="step active" id="st1"><div class="sn" onclick="navStep(1)">1</div><div class="sl" onclick="navStep(1)">タイプ<br>診断</div></div>
+<div class="sline" id="sline1"></div>
+<div class="step" id="st2"><div class="sn" onclick="navStep(2)">2</div><div class="sl" onclick="navStep(2)">カロリー<br>計算</div></div>
+<div class="sline" id="sline2"></div>
+<div class="step" id="st3"><div class="sn" onclick="navStep(3)">3</div><div class="sl" onclick="navStep(3)">継続<br>ヒント</div></div>
+<div class="sline" id="sline3"></div>
+<div class="step" id="st4"><div class="sn" onclick="navStep(4)">4</div><div class="sl" onclick="navStep(4)">やること<br>リスト</div></div>
+
+</div>
+
+<main>
+
+<!-- PAGE 1 -->
+
+<div class="pg" id="pg1">
+
+  <div class="card">
+
+    <div class="ct">🔍 あなたのタイプを診断</div>
+
+    <div class="cs">5つの質問に答えるだけで、あなたに合ったダイエット法がわかります</div>
+
+    <div class="qb">Q1. 今まで一番やりがちだったダイエット法は？</div>
+
+    <div class="qo-wrap">
+
+      <div class="qo" onclick="selQ(this,'q1','a')"><span class="oi">🍚</span>ごはんや炭水化物を抜いた</div>
+
+      <div class="qo" onclick="selQ(this,'q1','b')"><span class="oi">🏋️</span>とにかく運動を頑張った</div>
+
+      <div class="qo" onclick="selQ(this,'q1','c')"><span class="oi">📊</span>カロリーを細かく計算した</div>
+
+      <div class="qo" onclick="selQ(this,'q1','d')"><span class="oi">🌿</span>特定の食材・方法だけを試した</div>
+
+    </div>
+
+    <div class="qb">Q2. ダイエットで一番つらいのは？</div>
+
+    <div class="qo-wrap">
+
+      <div class="qo" onclick="selQ(this,'q2','a')"><span class="oi">🍫</span>甘いもの・お菓子の誘惑</div>
+
+      <div class="qo" onclick="selQ(this,'q2','b')"><span class="oi">😴</span>疲れや忙しさで続かない</div>
+
+      <div class="qo" onclick="selQ(this,'q2','c')"><span class="oi">📉</span>数字が動かない停滞期</div>
+
+      <div class="qo" onclick="selQ(this,'q2','d')"><span class="oi">🍽️</span>外食や付き合いで崩れる</div>
+
+    </div>
+
+    <div class="qb">Q3. 自分の食生活として一番当てはまるのは？</div>
+
+    <div class="qo-wrap">
+
+      <div class="qo" onclick="selQ(this,'q3','a')"><span class="oi">🌙</span>夜に食べすぎてしまう</div>
+
+      <div class="qo" onclick="selQ(this,'q3','b')"><span class="oi">⏩</span>食べる速度がとても速い</div>
+
+      <div class="qo" onclick="selQ(this,'q3','c')"><span class="oi">🕐</span>食事の時間が不規則</div>
+
+      <div class="qo" onclick="selQ(this,'q3','d')"><span class="oi">🧁</span>間食・お菓子が習慣化している</div>
+
+    </div>
+
+    <div class="qb">Q4. 普段の活動量は？</div>
+
+    <div class="qo-wrap">
+
+      <div class="qo" onclick="selQ(this,'q4','a')"><span class="oi">🪑</span>ほぼ座り仕事・あまり動かない</div>
+
+      <div class="qo" onclick="selQ(this,'q4','b')"><span class="oi">🚶</span>歩くことは多め（外回り・立ち仕事）</div>
+
+      <div class="qo" onclick="selQ(this,'q4','c')"><span class="oi">🚴</span>週2〜3回は運動している</div>
+
+      <div class="qo" onclick="selQ(this,'q4','d')"><span class="oi">🏃</span>ほぼ毎日体を動かしている</div>
+
+    </div>
+
+    <div class="qb">Q5. ダイエットに対するスタンスは？</div>
+
+    <div class="qo-wrap">
+
+      <div class="qo" onclick="selQ(this,'q5','a')"><span class="oi">🔥</span>短期間で結果を出したい</div>
+
+      <div class="qo" onclick="selQ(this,'q5','b')"><span class="oi">🐢</span>ゆっくりでいいから確実に痩せたい</div>
+
+      <div class="qo" onclick="selQ(this,'q5','c')"><span class="oi">🔄</span>リバウンドを繰り返しているので根本から変えたい</div>
+
+      <div class="qo" onclick="selQ(this,'q5','d')"><span class="oi">✨</span>見た目をスッキリさせたい（数字より体型）</div>
+
+    </div>
+
+    <button class="btn btn-p" id="diagBtn" onclick="diagnose()" disabled>診断する →</button>
+
+  </div>
+
+</div>
+
+<!-- PAGE 2 -->
+
+<div class="pg" id="pg2">
+
+  <div id="typeBox" class="type-box">
+
+    <div id="result1" style="display:none;">
+
+      <div class="tbadge" id="typeBadge"></div>
+
+      <div class="tname" id="typeName"></div>
+
+      <div class="tdesc" id="typeDesc"></div>
+
+    </div>
+
+  </div>
+
+  <div class="card">
+
+    <div class="ct">⚡ 必要カロリーを計算</div>
+
+    <div class="cs">身体情報を入力して、1日の目標を自動で算出します</div>
+
+    <div class="frow">
+
+      <div class="fg">
+
+        <label class="fl">年齢</label>
+
+        <input class="fi" type="number" id="age" placeholder="例：30" min="10" max="90"/>
+
+      </div>
+
+      <div class="fg">
+
+        <label class="fl">身長 (cm)</label>
+
+        <input class="fi" type="number" id="height" placeholder="例：160" min="100" max="220"/>
+
+      </div>
+
+      <div class="fg">
+
+        <label class="fl">体重 (kg)</label>
+
+        <input class="fi" type="number" id="weight" placeholder="例：60" min="30" max="200"/>
+
+      </div>
+
+    </div>
+
+    <div class="fg" style="margin-bottom:16px;">
+
+      <label class="fl">性別</label>
+
+      <div class="rb-wrap">
+
+        <div class="rb" onclick="selGender('m')">男性</div>
+
+        <div class="rb" onclick="selGender('f')">女性</div>
+
+      </div>
+
+    </div>
+
+    <div class="fg" style="margin-bottom:20px;">
+
+      <label class="fl">目標</label>
+
+      <div class="gb-wrap">
+
+        <div class="gb" onclick="selGoal('lose')">減量</div>
+
+        <div class="gb" onclick="selGoal('keep')">維持</div>
+
+        <div class="gb" onclick="selGoal('gain')">増量</div>
+
+      </div>
+
+    </div>
+
+    <button class="btn btn-p" onclick="calcCal()">計算する →</button>
+
+    <div id="calResult" style="display:none;margin-top:20px;">
+
+      <div class="cb-wrap">
+
+        <div class="cb cal"><div class="cbl">目標カロリー</div><div class="cbv" id="rCal">-</div><div class="cbu">kcal/日</div></div>
+
+        <div class="cb pro"><div class="cbl">たんぱく質</div><div class="cbv" id="rPro">-</div><div class="cbu">g/日</div></div>
+
+        <div class="cb fat"><div class="cbl">脂質</div><div class="cbv" id="rFat">-</div><div class="cbu">g/日</div></div>
+
+        <div class="cb car"><div class="cbl">炭水化物</div><div class="cbv" id="rCar">-</div><div class="cbu">g/日</div></div>
+
+      </div>
+
+      <div class="mc"><div class="mt">🌅 朝食</div><div class="mi" id="mAM"></div></div>
+
+      <div class="mc"><div class="mt">☀️ 昼食</div><div class="mi" id="mLU"></div></div>
+
+      <div class="mc"><div class="mt">🌙 夕食</div><div class="mi" id="mDI"></div></div>
+
+      <button class="btn btn-p" style="margin-top:16px;" onclick="goP(3)">継続のコツを見る →</button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PAGE 3 -->
+
+<div class="pg" id="pg3">
+
+<div class="card">
+
+  <div class="ct">🔑 継続するためのコツ</div>
+
+  <div class="cs">4つの視点から、あなたに合った方法を選ぼう</div>
+
+  <div class="ht">
+
+    <div class="htb active" onclick="swTab(this,'hFood')">🍱 食事</div>
+
+    <div class="htb" onclick="swTab(this,'hEx')">🏃 運動</div>
+
+    <div class="htb" onclick="swTab(this,'hMind')">🧘 メンタル</div>
+
+    <div class="htb" onclick="swTab(this,'hHab')">📅 習慣化</div>
+
+  </div>
+
+  <div class="hp active" id="hFood">
+
+    <div class="hi"><div class="htt">食事の順番を変える</div>野菜→たんぱく質→炭水化物の順に食べると血糖値の急上昇を防げます。</div>
+
+    <div class="hi"><div class="htt">80%満腹でやめる</div>食べ終わってから満腹感が来るまで20分かかります。少し物足りない程度でやめる練習を。</div>
+
+    <div class="hi"><div class="htt">夜の炭水化物を減らす</div>夜は活動量が減るため、夕食の炭水化物を半分にするだけでも効果的です。</div>
+
+  </div>
+
+  <div class="hp" id="hEx">
+
+    <div class="hi"><div class="htt">毎日10分の散歩から</div>激しい運動より「毎日続けられること」が大切。まず10分の散歩を習慣にしましょう。</div>
+
+    <div class="hi"><div class="htt">筋トレで基礎代謝アップ</div>有酸素運動だけでなく筋トレを取り入れると、安静時の消費カロリーが増えます。</div>
+
+    <div class="hi"><div class="htt">NEAT（日常活動）を増やす</div>エレベーターより階段、一駅歩くなど、日常の動きを増やすことを優先すると、無理なく体重が落ちていきます。</div>
+
+  </div>
+
+  <div class="hp" id="hMind">
+
+    <div class="hi"><div class="htt">「完璧」をやめる</div>一度崩れてもOK。「また明日から」ではなく「次の食事から」切り替えましょう。</div>
+
+    <div class="hi"><div class="htt">体重より行動に注目</div>毎日の体重変化に一喜一憂せず、「今日もできた行動」を記録する習慣が続けやすいです。</div>
+
+    <div class="hi"><div class="htt">ストレス発散の代替手段</div>食べることでストレス発散している場合は、散歩・入浴・会話など別の手段を持つと暴食が減ります。</div>
+
+  </div>
+
+  <div class="hp" id="hHab">
+
+    <div class="hi"><div class="htt">トリガーを決める</div>「朝起きたらすぐ体重を測る」など、既存の行動に紐付けると習慣化しやすいです。</div>
+
+    <div class="hi"><div class="htt">記録はシンプルに</div>細かく記録しようとすると続きません。写真1枚・一言メモで十分です。</div>
+
+    <div class="hi"><div class="htt">週1回だけ振り返る</div>毎日一喜一憂せず、週に1回だけ体重・食事・運動をまとめて振り返りましょう。</div>
+
+  </div>
+
+  <button class="btn btn-p" style="margin-top:16px;" onclick="goP(4)">やることリストを作成する →</button>
+
+</div>
+
+</div>
+
+<!-- PAGE 4 -->
+
+<div class="pg" id="pg4">
+
+<div class="card">
+
+  <div class="ct">✅ あなたのやることリスト</div>
+
+  <div class="cs">タップでチェック！毎日の行動を確認しよう</div>
+
+  <div id="todoList"></div>
+
+  <button class="btn btn-p" style="margin-top:8px;background:var(--ts);" onclick="resetTodo()">チェックをリセット</button>
+
+</div>
+
+</div>
+
+</main>
+
+<footer>Diet Navi &copy; 2025 &nbsp;|&nbsp; あなたの理想の体型への最短ルート</footer>
+
+<script>
+
+var ANS = {};
+
+var GENDER = '';
+
+var GOAL = '';
+
+var UTYPE = '';
+
+var TODOS = [];
+var MAX_REACHED = 1;
+
+/* ===== 診断 ===== */
+
+function selQ(el, key, val) {
+
+  var siblings = el.parentElement.querySelectorAll('.qo');
+
+  for (var i = 0; i < siblings.length; i++) {
+
+    siblings[i].classList.remove('sel');
+
+  }
+
+  el.classList.add('sel');
+
+  ANS[key] = val;
+
+  if (Object.keys(ANS).length >= 5) {
+
+    document.getElementById('diagBtn').disabled = false;
+
+  }
+
+}
+
+function diagnose() {
+
+  var sc = {A:0, B:0, C:0, D:0};
+
+  var a = ANS;
+
+  /* Q1 */
+
+  if(a.q1==='a') sc.A++;
+
+  else if(a.q1==='b') sc.B++;
+
+  else if(a.q1==='c') sc.C++;
+
+  else sc.D++;
+
+  /* Q2 */
+
+  if(a.q2==='a') sc.A++;
+
+  else if(a.q2==='b') sc.B++;
+
+  else if(a.q2==='c') sc.C++;
+
+  else sc.D++;
+
+  /* Q3 */
+
+  if(a.q3==='a'||a.q3==='d') sc.A++;
+
+  else if(a.q3==='b') sc.B++;
+
+  else sc.C++;
+
+  /* Q4 */
+
+  if(a.q4==='a') sc.A++;
+
+  else if(a.q4==='b'||a.q4==='c') sc.B++;
+
+  else sc.C++;
+
+  /* Q5 */
+
+  if(a.q5==='a') sc.A++;
+
+  else if(a.q5==='b'||a.q5==='c') sc.C++;
+
+  else sc.D++;
+
+  var best = 'A';
+
+  for (var k in sc) {
+
+    if (sc[k] > sc[best]) best = k;
+
+  }
+
+  UTYPE = best;
+
+  var types = {
+
+    A:{cls:'tA', badge:'🔥 食欲・衝動タイプ', name:'食欲に振り回されやすいタイプ',
+
+       desc:'お菓子や甘いものへの衝動が強く、ストレスや疲れで食べてしまいがちです。意志の強さで我慢しようとすると余計に爆食いしやすくなります。「環境を変える」「食べる順番を変える」など仕組みで対策するのが最も効果的です。'},
+
+    B:{cls:'tB', badge:'💪 運動・活動タイプ', name:'動くことは好きだが食事管理が苦手なタイプ',
+
+       desc:'運動へのモチベーションはあるものの、食事の管理が追いついていないタイプです。運動だけでは消費カロリーに限界があるため、食事の質を少し意識するだけで結果が大きく変わります。たんぱく質を増やすことを優先すると、無理なく体重が落ちていきます。'},
+
+    C:{cls:'tC', badge:'📊 停滞・継続タイプ', name:'頑張るが続かない・停滞するタイプ',
+
+       desc:'やる気があるときは頑張れるのに、停滞や忙しさで挫折してしまいます。完璧主義で一度崩れると全部やめてしまいがちです。「毎日完璧にやらない」「週1回だけ振り返る」など、ゆるい仕組みを作ることが長期継続のカギです。'},
+
+    D:{cls:'tD', badge:'🌿 知識・方法タイプ', name:'方法を探しすぎて行動できないタイプ',
+
+       desc:'ダイエット知識は豊富で、様々な方法を試してきたタイプです。情報過多で「どれが正解か」迷いやすく、完璧な方法を求めるあまり行動が後回しになりがちです。シンプルな行動を継続することを優先すると、無理なく体重が落ちていきます。'}
+
+  };
+
+  var t = types[UTYPE];
+
+  document.getElementById('typeBox').className = 'type-box ' + t.cls;
+
+  document.getElementById('typeBadge').textContent = t.badge;
+
+  document.getElementById('typeName').textContent = t.name;
+
+  document.getElementById('typeDesc').textContent = t.desc;
+
+  document.getElementById('result1').style.display = 'block';
+
+  goP(2);
+
+}
+
+function selGender(v) {
+
+  GENDER = v;
+
+  var btns = document.querySelectorAll('.rb');
+
+  btns.forEach(function(b){ b.classList.remove('sel'); });
+
+  event.target.classList.add('sel');
+
+}
+
+function selGoal(v) {
+
+  GOAL = v;
+
+  var btns = document.querySelectorAll('.gb');
+
+  btns.forEach(function(b){ b.classList.remove('sel'); });
+
+  event.target.classList.add('sel');
+
+}
+
+function calcCal() {
+
+  var age = parseFloat(document.getElementById('age').value);
+
+  var h = parseFloat(document.getElementById('height').value);
+
+  var w = parseFloat(document.getElementById('weight').value);
+
+  if (!age||!h||!w||!GENDER||!GOAL) { alert('全項目を入力・選択してください'); return; }
+
+  var bmr = GENDER==='m' ? 88.362+13.397*w+4.799*h-5.677*age : 447.593+9.247*w+3.098*h-4.330*age;
+
+  var act = 1.4;
+
+  var tdee = Math.round(bmr * act);
+
+  var target = GOAL==='lose' ? tdee-500 : GOAL==='gain' ? tdee+300 : tdee;
+
+  var pro = Math.round(w*1.6);
+
+  var fat = Math.round(target*0.25/9);
+
+  var car = Math.round((target - pro*4 - fat*9)/4);
+
+  document.getElementById('rCal').textContent = target;
+
+  document.getElementById('rPro').textContent = pro;
+
+  document.getElementById('rFat').textContent = fat;
+
+  document.getElementById('rCar').textContent = car;
+
+  var meals = {
+
+    AM: ['卵2個','ギリシャヨーグルト','バナナ1本','全粒粉パン1枚','コーヒー（無糖）'],
+
+    LU: ['鶏むね肉100g','玄米','サラダ（ドレッシング少量）','豆腐味噌汁'],
+
+    DI: ['魚か肉150g','野菜たっぷりスープ','ご飯少なめ','納豆']
+
+  };
+
+  ['AM','LU','DI'].forEach(function(m){
+
+    var el = document.getElementById('m'+m);
+
+    el.innerHTML = '';
+
+    meals[m].forEach(function(item){
+
+      var t = document.createElement('span');
+
+      t.className = 'tag';
+
+      t.textContent = item;
+
+      el.appendChild(t);
+
+    });
+
+  });
+
+  document.getElementById('calResult').style.display = 'block';
+
+  buildTodo();
+
+}
+
+function buildTodo() {
+
+  var typeActions = {
+
+    A: [
+
+      {t:'間食ゾーンを作る', s:'15〜16時だけOKなど時間を決める'},
+
+      {t:'お菓子を視界から消す', s:'買い置きをやめる・引き出しにしまう'},
+
+      {t:'食前にコップ1杯の水を飲む', s:'満腹感を先取りして食べすぎ防止'},
+
+      {t:'野菜から食べる習慣をつける', s:'血糖値の急上昇を防ぐ食べ方'}
+
+    ],
+
+    B: [
+
+      {t:'毎食たんぱく質を意識する', s:'肉・魚・卵・豆腐のどれかを必ず'},
+
+      {t:'週3回筋トレを行う', s:'スクワット・腕立て・腹筋など自重でOK'},
+
+      {t:'食後30分以内に軽く歩く', s:'血糖値コントロールに効果的'},
+
+      {t:'夜の炭水化物を半分にする', s:'夕食のご飯を茶碗半分に減らす'}
+
+    ],
+
+    C: [
+
+      {t:'週1回だけ体重を記録する', s:'毎日の変動に振り回されない'},
+
+      {t:'「今日だけ完璧」をやめる', s:'70%OKの日があっていい'},
+
+      {t:'停滞期は2〜3週間続くと知っておく', s:'焦らず継続することが最重要'},
+
+      {t:'小さな習慣を1つ決める', s:'「毎朝体重を測る」だけでもOK'}
+
+    ],
+
+    D: [
+
+      {t:'情報を1つに絞る', s:'今週はこれだけをやると決める'},
+
+      {t:'完璧な食事より「だいたい良い食事」', s:'8割良ければ十分と考える'},
+
+      {t:'まず1週間だけ試す', s:'「向いてないかも」は1週間後に判断'},
+
+      {t:'毎食の記録をシンプルにする', s:'写真1枚だけでOK'}
+
+    ]
+
+  };
+
+  var base = [
+
+    {t:'毎朝体重を測る', s:'起床後・トイレ後・空腹時に測る'},
+
+    {t:'1日2L以上の水を飲む', s:'代謝アップ・食欲抑制に効果的'},
+
+    {t:'夜23時以降は食べない', s:'睡眠中の脂肪燃焼を妨げない'}
+
+  ];
+
+  TODOS = (typeActions[UTYPE]||[]).concat(base);
+
+  var list = document.getElementById('todoList');
+
+  list.innerHTML = '';
+
+  TODOS.forEach(function(item){
+
+    var d = document.createElement('div');
+
+    d.className = 'tod';
+
+    d.onclick = function(){ toggleTodo(this); };
+
+    d.innerHTML = '<div><div class="todt">'+item.t+'</div><div class="tods">'+item.s+'</div></div>';
+
+    list.appendChild(d);
+
+  });
+
+}
+
+function goP(n) {
+  if (n > MAX_REACHED) MAX_REACHED = n;
+  document.querySelectorAll('.pg').forEach(function(p){ p.classList.remove('show'); });
+  document.querySelectorAll('.step').forEach(function(s){ s.classList.remove('active','done'); });
+  document.getElementById('pg'+n).classList.add('show');
+  for (var i = 1; i <= 4; i++) {
+    if (i < n) document.getElementById('st'+i).classList.add('done');
+    else if (i === n) document.getElementById('st'+i).classList.add('active');
+    var sl = document.getElementById('sline'+i);
+    if (sl) sl.classList.toggle('done', i < n);
+  }
+  window.scrollTo(0,0);
+}
+
+function navStep(n) {
+  if (n > MAX_REACHED) return;
+  goP(n);
+}
+function swTab(el, id) {
+
+  document.querySelectorAll('.htb').forEach(function(b){ b.classList.remove('active'); });
+
+  document.querySelectorAll('.hp').forEach(function(p){ p.classList.remove('active'); });
+
+  el.classList.add('active');
+
+  document.getElementById(id).classList.add('active');
+
+}
+
+function toggleTodo(el) {
+
+  el.classList.toggle('done');
+
+}
+
+function resetTodo() {
+
+  document.querySelectorAll('.tod').forEach(function(t){ t.classList.remove('done'); });
+
+}
+
+// init
+
+goP(1);
+
+</script>
+
+</body>
+
+</html>
